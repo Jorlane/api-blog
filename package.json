@@ -1,0 +1,43 @@
+{
+  "name": "api-blog",
+  "version": "1.0.0",
+  "engines": {
+    "node": "16.x"
+  },
+  "description": "API do projeto TCC da Puc Minas - Backend blog",
+  "main": "server.js",
+  "scripts": {
+    "start": "node ./src/server.js",
+    "dev": "env-cmd -f ./dev.env nodemon ./src/server.js",
+    "pretest": "env-cmd -f ./test.env node ./__test__/000_before.js",
+    "test": "env-cmd -f ./test.env jest",
+    "pretestuser": "env-cmd -f ./test.env node ./__test__/000_before.js",
+    "testuser": "env-cmd -f ./test.env jest ./__test__/001_user.test.js",
+    "pretestwriter": "env-cmd -f ./test.env node ./__test__/000_before.js",
+    "testwriter": "env-cmd -f ./test.env jest ./__test__/003_writer.test.js",
+    "pretestarticle": "env-cmd -f ./test.env node ./__test__/000_before.js",
+    "testarticle": "env-cmd -f ./test.env jest ./__test__/004_article.test.js",
+    "pretestcategory": "env-cmd -f ./test.env node ./__test__/000_before.js",
+    "testcategory": "env-cmd -f ./test.env jest ./__test__/002_category.test.js"
+  },
+  "author": "Jorlane Brandão",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt": "^5.0.1",
+    "chalk": "^4.1.2",
+    "cors": "^2.8.5",
+    "dotenv": "^10.0.0",
+    "express": "^4.17.1",
+    "jsonwebtoken": "^8.5.1",
+    "multer": "^1.4.3",
+    "mysql2": "^2.3.0",
+    "pg": "^8.7.3",
+    "pg-hstore": "^2.3.4",
+    "sequelize": "^6.7.0"
+  },
+  "devDependencies": {
+    "env-cmd": "^10.1.0",
+    "jest": "^27.3.0",
+    "supertest": "^6.1.6"
+  }
+}
