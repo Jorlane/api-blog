@@ -1,9 +1,6 @@
 {
   "name": "api-blog",
   "version": "1.0.0",
-  "engines": {
-    "node": "16.x"
-  },
   "description": "API do projeto TCC da Puc Minas - Backend blog",
   "main": "server.js",
   "scripts": {
