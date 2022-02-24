@@ -1,6 +1,6 @@
 {
   "name": "api-blog",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "API do projeto TCC da Puc Minas - Backend blog",
   "main": "server.js",
   "scripts": {
@@ -12,8 +12,10 @@
     "testuser": "env-cmd -f ./test.env jest ./__test__/001_user.test.js",
     "pretestwriter": "env-cmd -f ./test.env node ./__test__/000_before.js",
     "testwriter": "env-cmd -f ./test.env jest ./__test__/003_writer.test.js",
+
     "pretestarticle": "env-cmd -f ./test.env node ./__test__/000_before.js",
     "testarticle": "env-cmd -f ./test.env jest ./__test__/004_article.test.js",
+
     "pretestcategory": "env-cmd -f ./test.env node ./__test__/000_before.js",
     "testcategory": "env-cmd -f ./test.env jest ./__test__/002_category.test.js"
   },

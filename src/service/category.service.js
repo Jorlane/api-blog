@@ -63,7 +63,11 @@ exports.findAll = (req, res) => {
 exports.findById = (req, res) => {
     Category.findByPk(req.params.id)
         .then(data => {
-            res.status(200).send(data)
+            if (data) {
+                res.status(200).send(data)
+            } else {
+                res.status(204).send(null)
+            }
         })
         .catch(err => {
             const module = 'Category'

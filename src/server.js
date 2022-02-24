@@ -6,6 +6,8 @@ const app  = require('./app')
 const db = require('./db')
 const start = require('./config/start')
 
+const package =  require('../package.json')
+
 const START_DB = process.env.START_DB || 'false'
 let force_db = false
 if (START_DB === 'true') {
@@ -23,6 +25,7 @@ app.listen(port, async () => {
         console.log(chalk.italic.inverse.gray('                                                                   '))
         console.log(chalk.italic.inverse.gray('  ') + chalk.italic.inverse.yellow('                                                               ') + chalk.italic.inverse.gray('  ') )
         console.log(chalk.italic.inverse.gray('  ') + chalk.italic.inverse.yellow(`          O servidor está executando na porta ${port}...          `)+ chalk.italic.inverse.gray('  ') )
+        console.log(chalk.italic.inverse.gray('  ') + chalk.italic.inverse.yellow(`                           Versão ${package.version}                        `)+ chalk.italic.inverse.gray('  ') )
         console.log(chalk.italic.inverse.gray('  ') + chalk.italic.inverse.yellow(`                Para finalizar, pressione Ctrl+c               `) + chalk.italic.inverse.gray('  ') )
         console.log(chalk.italic.inverse.gray('  ') + chalk.italic.inverse.yellow('                                                               ')+ chalk.italic.inverse.gray('  ') )
         console.log(chalk.italic.inverse.gray('                                                                   '))

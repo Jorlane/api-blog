@@ -7,6 +7,8 @@ const Article = require('../src/service/Article.service')
 const SectionInArticle = require('../src/service/SectionInArticle.service')
 const start = require('../src/config/start')
 
+const associations = require('../src/models/associations')
+
 const init_test = async() =>  {
     console.log('*=*=*=*=*=*=*=*=*=*= Início da configuração do test.')
     await db.sync({ force : true })

@@ -1,7 +1,6 @@
 const request = require('supertest')
 const app = require('../src/app');
 const db = require('../src/db')
-const User = require('../src/service/user.service')
 
 /* ********************************************************
   Regras: 

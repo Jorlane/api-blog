@@ -33,7 +33,7 @@ exports.createDefaultWriter = (userId) => {
 exports.create = (req, res, next) => {
     const userId = req.body.userId || ''
     
-    validation.accessValidadeUser(userId, req, res) 
+    validation.accessValidateUser(userId, req, res) 
         .then(
             Writer.findByPk(userId)
             .then(writer => {
@@ -103,7 +103,7 @@ exports.findAll = (req, res) => {
 
 exports.delete = (req, res) => {
     const userId = req.params.userId
-    validation.accessValidadeUser(userId, req, res) 
+    validation.accessValidateUser(userId, req, res) 
         .then(
             Article.findOne({
                 where: {writerId: userId}

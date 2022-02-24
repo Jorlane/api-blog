@@ -1,6 +1,5 @@
 const request = require('supertest')
 const app = require('../src/app');
-const Category = require('../src/model/category');
 const db = require('../src/db')
 
 /* ********************************************************
@@ -21,6 +20,8 @@ let userLogged1 = {}
 
 beforeAll(async () => {
   console.log('*=*=*=*=*=*=*=*=*=*= Início beforeAll category.test')
+
+
   const response = await request(app)
   .post('/oapi/users/login')  
   .send({
@@ -29,9 +30,8 @@ beforeAll(async () => {
   })
   userLogged1 = response.body
 
-  console.log('userLogged1 ======> ', userLogged1)
-
   insertedCategories = []
+
   console.log('*=*=*=*=*=*=*=*=*=*= Fim beforeAll category.test')
 })
 
@@ -120,5 +120,6 @@ test('Não é permitido excluir categoria que tenha subcategoria vinculada', asy
 test('Deve ser possível consultar todas as categorias', async () => {
   const response = await request(app)
     .get('/oapi/categories')
-  expect(response.body).toMatchObject(insertedCategories)
+    
+  expect(response.body.length).toBeGreaterThanOrEqual(insertedCategories.length)
 })
