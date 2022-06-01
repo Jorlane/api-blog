@@ -1,27 +1,34 @@
 {
   "name": "api-blog",
-  "version": "0.0.2",
+  "version": "1.0.0",
   "description": "API do projeto TCC da Puc Minas - Backend blog",
   "main": "server.js",
   "scripts": {
     "start": "node ./src/server.js",
     "dev": "env-cmd -f ./dev.env nodemon ./src/server.js",
     "pretest": "env-cmd -f ./test.env node ./__test__/000_before.js",
-    "test": "env-cmd -f ./test.env jest",
+    "test": "env-cmd -f ./test.env jest --coverage",
     "pretestuser": "env-cmd -f ./test.env node ./__test__/000_before.js",
     "testuser": "env-cmd -f ./test.env jest ./__test__/001_user.test.js",
     "pretestwriter": "env-cmd -f ./test.env node ./__test__/000_before.js",
     "testwriter": "env-cmd -f ./test.env jest ./__test__/003_writer.test.js",
-
     "pretestarticle": "env-cmd -f ./test.env node ./__test__/000_before.js",
     "testarticle": "env-cmd -f ./test.env jest ./__test__/004_article.test.js",
-
     "pretestcategory": "env-cmd -f ./test.env node ./__test__/000_before.js",
-    "testcategory": "env-cmd -f ./test.env jest ./__test__/002_category.test.js"
+    "testcategory": "env-cmd -f ./test.env jest ./__test__/002_category.test.js",
+    "pretestcomment": "env-cmd -f ./test.env node ./__test__/000_before.js",
+    "testcomment": "env-cmd -f ./test.env jest ./__test__/005_comment.test.js",
+    "pretestinteraction": "env-cmd -f ./test.env node ./__test__/000_before.js",
+    "testinteraction": "env-cmd -f ./test.env jest ./__test__/006_interaction.test.js",
+    "pretestcomplaint": "env-cmd -f ./test.env node ./__test__/000_before.js",
+    "testcomplaint": "env-cmd -f ./test.env jest ./__test__/007_complaint.test.js",
+    "pretestconnection": "env-cmd -f ./test.env node ./__test__/000_before.js",
+    "testconnection": "env-cmd -f ./test.env jest ./__test__/008_connection.test.js"
   },
   "author": "Jorlane Brandão",
   "license": "ISC",
   "dependencies": {
+    "axios": "^0.27.2",
     "bcrypt": "^5.0.1",
     "chalk": "^4.1.2",
     "cors": "^2.8.5",

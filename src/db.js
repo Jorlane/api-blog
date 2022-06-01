@@ -11,7 +11,8 @@ const DB_HOST     = process.env.DB_HOST
 
 const sequelize   = new Sequelize(DATABASE, DB_USER, DB_PASSWORD, {
     dialect: DB_SERVER, 
-    host: DB_HOST
+    host: DB_HOST, 
+    logging: false
 })
 
 //testando a conexão

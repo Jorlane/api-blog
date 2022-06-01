@@ -14,6 +14,7 @@ if (START_DB === 'true') {
     force_db = true
 }
 const port = process.env.PORT || 3000
+const environment = process.env.ENVIRONMENT
 
 app.listen(port, async () => {   
     console.log(chalk.blue('Iniciando o Banco de Dados. Aguarde....'))
@@ -30,6 +31,8 @@ app.listen(port, async () => {
         console.log(chalk.italic.inverse.gray('  ') + chalk.italic.inverse.yellow('                                                               ')+ chalk.italic.inverse.gray('  ') )
         console.log(chalk.italic.inverse.gray('                                                                   '))
         console.log('                                     ')
+        console.log(`Environment: ${environment}                                      `)
+        console.log('                                        ')
     } catch (e) {
         console.log(chalk.red('Erro ao tentar conectar com o banco de dados: ', e))
     }

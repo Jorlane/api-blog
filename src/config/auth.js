@@ -13,7 +13,7 @@ module.exports = (req, res, next) => {
         const token = req.body.token || req.query.token || req.headers['authorization']
     
         if (!token) {
-            console.log('Tentativa de acesso tem token! ')
+            console.log('Tentativa de acesso sem token! ')
             return res.status(403).send({message: 'Sem token para acesso.'})
         }
 

@@ -1,5 +1,7 @@
 const User = require('../models/user')
 const errorLog = require('../service/error.log')
+const jwt = require('jsonwebtoken')
+const authSecret = process.env.AUTH_SECRET
 
 function accessValidateUser(userId, req, res) {
     return new Promise((resolve, reject) => {
@@ -12,6 +14,7 @@ function accessValidateUser(userId, req, res) {
                     } else {
                         resolve(user)
                     }
+                    
                 } else {
                     resolve()
                 }
@@ -25,4 +28,25 @@ function accessValidateUser(userId, req, res) {
     })
 }
 
-module.exports = { accessValidateUser }
+function decodeToken(token) {
+    return new Promise((resolve, reject) => {
+
+        jwt.verify(token, authSecret, function(err, decoded) {
+            if (err) {
+                console.log('ERRO NO jwt.verify ===> ', err)
+                reject ({status: 'err', 
+                    message: 'Falha ao autenticar token.'
+                })
+            } else {
+                const result = {
+                    status: 'ok', 
+                    user: decoded 
+                }
+                resolve(result)
+            }
+            
+        })
+    })
+}
+
+module.exports = { accessValidateUser, decodeToken }

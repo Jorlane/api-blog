@@ -4,8 +4,16 @@ const jwt = require('jsonwebtoken')
 const bcrypt = require('bcrypt')
 const User = require('../models/user')
 
+const https = require('https')
+const fs = require('fs')
+const path = require('path')
+const axios = require('axios')
+
 const validation = require('../config/validation')
 const errorLog = require('./error.log')
+const publicDir = require('../../consts')
+const imagePublicDir = require('../../consts')
+require('../../consts')
 
 const authSecret = process.env.AUTH_SECRET
 
@@ -24,6 +32,7 @@ function getUserProfile(user) {
         userProfile.firstAccess = user.firstAccess
         userProfile.lastAccess = user.lastAccess
         userProfile.isAdministrator = user.isAdministrator
+        userProfile.commentBlocked = user.commentBlocked
     }
     return userProfile
 }
@@ -40,7 +49,6 @@ const getPublicProfile = (req, res, next) => {
                 bioDescription: user.bioDescription || '', 
                 photo: user.photo
             }
-            console.log('resultado => user =  ', user)
             res.status(200).send(userResponse)
         } else {
             res.status(204).send(data)
@@ -82,6 +90,100 @@ const login = (req, res, next) => {
             return res.status(400).send({message: 'Usuário/Senha inválidos!'})
         }
 
+    }).catch(err => {
+        const module = 'User'
+        const method = 'login'
+        errorLog.log(module, method, err)
+        res.status(500).send({message: `Error in ${method} at ${module}:  ${err.original.sqlMessage}`})
+    });
+}
+
+function downloadGoogleImageProfile(url) {
+    return new Promise((resolve, reject) => {
+        const fileName = 'google_image_profile-' + Date.now() + '.jpg' 
+        let dataImage = null
+        let imageDir = imagePublicDir
+
+        axios({
+            method: 'GET', 
+            url: url, 
+            responseType: 'stream'
+        }).then(response => {
+            response.data.pipe(fs.createWriteStream(path.join(imageDir, fileName)))
+            resolve(fileName)
+        })
+    })
+}
+
+const loginWithGoogle = (req, res, next) => {
+    const email = req.body.email || ''
+    const name = req.body.name || ''
+    const imageUrl = req.body.imageUrl || ''
+    const tokenGoogle = req.body.tokenGoogle || ''
+
+    // Atenção falta validar o token do google
+
+    User.findOne({
+        where: {email}
+    }).then(data => {
+        if (data) {
+            const user = data.toJSON()
+            const dataToToken = {
+                id: user.id, 
+                name: user.name, 
+                email: user.email,
+                isAdministrator: false
+            }
+            const token = jwt.sign(dataToToken, authSecret, {
+                expiresIn: "1 day"
+            })
+            const userProfile = getUserProfile(user)
+            return res.status(200).send({ userProfile, token, valid: true})
+        } else {
+            downloadGoogleImageProfile(imageUrl)
+            .then(fileName => {
+                const newUser = {
+                    name, 
+                    email, 
+                    password: '', 
+                    photo: fileName,
+                    bioDescription: '', 
+                    allowEmailNotification: false,
+                    frequencyEmailNotification: '',
+                    firstAccess: Date.now(), 
+                    lastAccess:  Date.now(),
+                    isAdministrator: false,
+                    commentBlocked: false
+                }
+                User.create(newUser)
+                .then(data => {
+                    const user = data.toJSON()
+                    const dataToToken = {
+                        id: user.id, 
+                        name: user.name, 
+                        email: user.email,
+                        isAdministrator: false
+                    }
+                    const token = jwt.sign(dataToToken, authSecret, {
+                        expiresIn: "1 day"
+                    })
+                    const userProfile = getUserProfile(user)
+                    return res.status(200).send({ userProfile, token, valid: true})
+                })
+                .catch(err => {
+                    console.log('Dentro do catch do create: ', err)
+                    const module = 'User'
+                    const method = 'signup.create'
+                    errorLog.log(module, method, err)
+                    res.status(500).send({message: `Error in ${method} at ${module}:  ${err.original ? err.original.sqlMessage : err}`})
+                });
+            })
+            .catch((fileName, err) => {
+                console.log('Dentro do catch de downloadImageGoogle. ')
+                console.log('Dentro do catch de downloadImageGoogle fileName = ', fileName)
+                console.log('Dentro do catch de downloadImageGoogle err = ', err)
+            })
+        }
     }).catch(err => {
         const module = 'User'
         const method = 'login'
@@ -305,4 +407,55 @@ const createDefaultUserAdmin = function ()  {
         })
 }
 
-module.exports = { getPublicProfile, login, validateToken, signup, updateProfile, getOwnProfile, deleteOwnProfile, uploadImageProfile, createDefaultUserAdmin }
+const blockComment = (req, res, next) => {
+    const userId = req.body.userId
+
+    User.findByPk(userId) 
+        .then(data => {
+            if (data) {
+                const user = data
+                user.commentBlocked = true
+                user.save({fields: ['commentBlocked']
+                }).then(data => {
+                    res.status(200).send({message: 'Alteração efetuada com sucesso!'})
+                }).catch(err => {
+                    const module = 'User'
+                    const method = 'blockComment.save'
+                    errorLog.log(module, method, err)
+                    res.status(500).send({message: `Error in ${method} at ${module}:  ${err}`})
+                });
+            } else {
+                res.status(204).send({message: 'Usuário não encontrado!'})
+            }
+        })
+        .catch(err => {
+            res.status(500).send({ message:  err.message })
+        })
+}
+const unblockComment = (req, res, next) => {
+    const userId = req.body.userId
+
+    User.findByPk(userId) 
+        .then(data => {
+            if (data) {
+                const user = data
+                user.commentBlocked = false
+                user.save({fields: ['commentBlocked']
+                }).then(data => {
+                    res.status(200).send({message: 'Alteração efetuada com sucesso!'})
+                }).catch(err => {
+                    const module = 'User'
+                    const method = 'unblockComment.save'
+                    errorLog.log(module, method, err)
+                    res.status(500).send({message: `Error in ${method} at ${module}:  ${err}`})
+                });
+            } else {
+                res.status(204).send({message: 'Usuário não encontrado!'})
+            }
+        })
+        .catch(err => {
+            res.status(500).send({ message:  err.message })
+        })
+}
+
+module.exports = { getPublicProfile, login, loginWithGoogle, validateToken, signup, updateProfile, getOwnProfile, deleteOwnProfile, uploadImageProfile, createDefaultUserAdmin, blockComment, unblockComment}

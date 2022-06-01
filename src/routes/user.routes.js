@@ -1,6 +1,7 @@
 module.exports = app => {
     const user = require("../service/user.service.js")
     const auth = require('../config/auth')
+    const authAdmin = require('../config/authAdmin')
     const multer  = require('multer')
     const path = require('path')
 
@@ -20,6 +21,7 @@ module.exports = app => {
     var router = require("express").Router()
     router.get("/:id", user.getPublicProfile)
     router.post("/login", user.login)
+    router.post("/loginWithGoogle", user.loginWithGoogle)
     router.post("/signup", user.signup)
     router.post("/validate", user.validateToken)
     router.post("/profile/image",  upload.single('file'), user.uploadImageProfile)
@@ -32,5 +34,12 @@ module.exports = app => {
     privateRouter.get("/:id", user.getOwnProfile)
     privateRouter.delete("/:id", user.deleteOwnProfile)
     app.use('/api/users', privateRouter)
+
+       // Admin Routes
+       var adminRouter = require("express").Router()
+       adminRouter.use(authAdmin)
+       adminRouter.put("/blockComments/", user.blockComment)
+       adminRouter.put("/unblockComments/", user.unblockComment)
+       app.use('/api/users', adminRouter)
 
   }
